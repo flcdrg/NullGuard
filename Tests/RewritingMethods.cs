@@ -78,9 +78,19 @@ public class RewritingMethods :
     }
 
     [Fact]
-    public Task RequiresNonNullArgumentWhenNullableReferenceTypeNotUsed()
+    public Task RequiresNonNullArgumentWhenNullableReferenceTypeNotUsedInClassWithNullableContext1()
     {
-        var type = AssemblyWeaver.Assembly.GetType(nameof(NullableReferenceTypeClass));
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        var exception = Assert.Throws<ArgumentNullException>(() => { sample.SomeMethod(null, ""); });
+        Assert.Equal("nonNullArg", exception.ParamName);
+        return Verify(exception.Message);
+    }
+
+    [Fact]
+    public Task RequiresNonNullArgumentWhenNullableReferenceTypeNotUsedInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
         var sample = (dynamic)Activator.CreateInstance(type);
         var exception = Assert.Throws<ArgumentNullException>(() => { sample.SomeMethod(null, ""); });
         Assert.Equal("nonNullArg", exception.ParamName);
@@ -90,9 +100,25 @@ public class RewritingMethods :
     [Fact]
     public void AllowsNullWhenNullableReferenceTypeUsed()
     {
-        var type = AssemblyWeaver.Assembly.GetType(nameof(NullableReferenceTypeClass));
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
         var sample = (dynamic)Activator.CreateInstance(type);
         sample.SomeMethod("", null);
+    }
+
+    [Fact]
+    public void AllowsNullWhenNullableReferenceTypeUsedInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        sample.SomeMethod("", null);
+    }
+
+    [Fact]
+    public void AllowsNullWithoutAttributeWhenNullableReferenceTypeUsedInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        sample.AnotherMethod(null);
     }
 
     [Fact]
@@ -105,9 +131,18 @@ public class RewritingMethods :
     }
 
     [Fact]
-    public Task RequiresNonNullMethodReturnValueWhenNullableReferenceTypeNotUsed()
+    public Task RequiresNonNullMethodReturnValueWhenNullableReferenceTypeNotUsedInClassWithNullableContext1()
     {
-        var type = AssemblyWeaver.Assembly.GetType(nameof(NullableReferenceTypeClass));
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        var exception = Assert.Throws<InvalidOperationException>(() => sample.MethodWithReturnValue(true));
+        return Verify(exception.Message);
+    }
+
+    [Fact]
+    public Task RequiresNonNullMethodReturnValueWhenNullableReferenceTypeNotUsedInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
         var sample = (dynamic)Activator.CreateInstance(type);
         var exception = Assert.Throws<InvalidOperationException>(() => sample.MethodWithReturnValue(true));
         return Verify(exception.Message);
@@ -133,7 +168,7 @@ public class RewritingMethods :
     [Fact]
     public void AllowsNullReturnValueWhenNullableReferenceType()
     {
-        var type = AssemblyWeaver.Assembly.GetType(nameof(NullableReferenceTypeClass));
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
         var sample = (dynamic)Activator.CreateInstance(type);
         sample.MethodAllowsNullReturnValue();
     }

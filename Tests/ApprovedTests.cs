@@ -114,6 +114,18 @@ public class ApprovedTests:
     }
 
     [Fact]
+    public Task ClassWithNullableContext1()
+    {
+        return Verify(Ildasm.Decompile(AssemblyWeaver.AfterAssemblyPath, nameof(ClassWithNullableContext1)));
+    }
+
+    [Fact]
+    public Task ClassWithNullableContext2()
+    {
+        return Verify(Ildasm.Decompile(AssemblyWeaver.AfterAssemblyPath, nameof(ClassWithNullableContext2)));
+    }
+
+    [Fact]
     public Task InfosList()
     {
         return Verify(AssemblyWeaver.TestResult.Messages.Select(x=>x.Text));
