@@ -26,6 +26,11 @@ public class ClassWithNullableContext1
         return null;
     }
 
+    public static string? StaticMethodAllowsNullReturnValue(string nonNullArg)
+    {
+        return null;
+    }
+
     public string AnotherMethod(string nonNullArg)
     {
         return nonNullArg;

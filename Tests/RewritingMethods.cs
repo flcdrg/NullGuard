@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
@@ -187,6 +188,21 @@ public class RewritingMethods :
         var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableReferenceMethod));
         var sample = (dynamic)Activator.CreateInstance(type);
         sample.MethodAllowsNullReturnValue("");
+    }
+
+    [Fact]
+    public void AllowsNullReturnValueWhenStaticNullableReferenceTypeUsedInClassWithNullableContext1()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+
+        Assert.Null(type.GetMethod("StaticMethodAllowsNullReturnValue", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[]{""}));
+    }
+
+    [Fact]
+    public void AllowsNullReturnValueWhenStaticNullableReferenceTypeUsedInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        Assert.Null(type.GetMethod("StaticMethodAllowsNullReturnValue", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { "" }));
     }
 
     [Fact]

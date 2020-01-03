@@ -27,6 +27,11 @@ public class ClassWithNullableContext2
         return null;
     }
 
+    public static string? StaticMethodAllowsNullReturnValue(string nonNullArg)
+    {
+        return null;
+    }
+
     public void AnotherMethod(string? nullArg)
     {
 
@@ -63,5 +68,4 @@ public class ClassWithNullableContext2
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public string NonNullProperty { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
 }

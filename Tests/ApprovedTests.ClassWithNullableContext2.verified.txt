@@ -60,6 +60,23 @@ MethodAllowsNullReturnValue() cil managed
 IL_0000:  ldnull
 IL_0001:  ret
 }
+.method public hidebysig static string
+StaticMethodAllowsNullReturnValue(string nonNullArg) cil managed
+{
+.custom instance void System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = ( 01 00 01 00 00 )
+.param [0]
+.custom instance void System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = ( 01 00 02 00 00 )
+.maxstack  2
+IL_0000:  ldarg.0
+IL_0001:  brtrue.s   IL_0013
+IL_0003:  ldstr      "nonNullArg"
+IL_0008:  ldstr      "[NullGuard] nonNullArg is null."
+IL_000d:  newobj     instance void [mscorlib]System.ArgumentNullException::.ctor(string,
+string)
+IL_0012:  throw
+IL_0013:  ldnull
+IL_0014:  ret
+}
 .method public hidebysig instance void
 AnotherMethod(string nullArg) cil managed
 {
