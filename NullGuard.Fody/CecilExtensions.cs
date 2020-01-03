@@ -125,9 +125,10 @@ static class CecilExtensions
         }
 
         return GetDefaultNullableContext(methodDefinition) ||
-               methodDefinition.MethodReturnType.CustomAttributes.Any(a => a.AttributeType.Name == AllowNullAttributeTypeName) ||
-               // ReSharper uses a *method* attribute for CanBeNull for the return value
-               methodDefinition.CustomAttributes.Any(a => a.AttributeType.Name == CanBeNullAttributeTypeName);
+            methodDefinition.MethodReturnType.CustomAttributes.HasNullableReferenceTypeAnnotation(NullableAttributeTypeName, NullableAnnotated) ||
+            methodDefinition.MethodReturnType.CustomAttributes.Any(a => a.AttributeType.Name == AllowNullAttributeTypeName) ||
+            // ReSharper uses a *method* attribute for CanBeNull for the return value
+            methodDefinition.CustomAttributes.Any(a => a.AttributeType.Name == CanBeNullAttributeTypeName);
     }
 
     public static bool ContainsAllowNullAttribute(this ICustomAttributeProvider definition)

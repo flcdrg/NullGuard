@@ -126,6 +126,12 @@ public class ApprovedTests:
     }
 
     [Fact]
+    public Task ClassWithNullableReferenceMethod()
+    {
+        return Verify(Ildasm.Decompile(AssemblyWeaver.AfterAssemblyPath, nameof(ClassWithNullableReferenceMethod)));
+    }
+
+    [Fact]
     public Task InfosList()
     {
         return Verify(AssemblyWeaver.TestResult.Messages.Select(x=>x.Text));
