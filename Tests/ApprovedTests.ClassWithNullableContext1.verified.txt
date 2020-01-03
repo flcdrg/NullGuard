@@ -145,6 +145,14 @@ IL_0001:  ldarg.1
 IL_0002:  stfld      string ClassWithNullableContext1::'<NonNullProperty>k__BackingField'
 IL_0007:  ret
 }
+.method public hidebysig instance string
+MethodWithNullableContext0() cil managed
+{
+.custom instance void System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = ( 01 00 00 00 00 )
+.maxstack  1
+IL_0000:  ldnull
+IL_0001:  ret
+}
 .method public hidebysig specialname rtspecialname
 instance void  .ctor() cil managed
 {

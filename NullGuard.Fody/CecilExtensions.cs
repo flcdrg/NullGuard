@@ -11,6 +11,7 @@ static class CecilExtensions
     // https://github.com/dotnet/roslyn/blob/master/docs/features/nullable-metadata.md
     const string NullableContextAttributeTypeName = "NullableContextAttribute";
     const string NullableAttributeTypeName = "NullableAttribute";
+    const byte NullableOblivious = 0;
     const byte NullableNotAnnotated = 1;
     const byte NullableAnnotated = 2;
     private const string SystemByteFullTypeName = "System.Byte";
@@ -62,9 +63,9 @@ static class CecilExtensions
 
     static bool GetDefaultNullableContext(IMemberDefinition member)
     {
-        // Class's nullable context is 2
+        // Class's nullable context is 0 or 2
         var defaultNullable = member.DeclaringType.CustomAttributes
-            .HasNullableReferenceTypeAnnotation(NullableContextAttributeTypeName, NullableAnnotated);
+            .HasNullableReferenceTypeAnnotation(NullableContextAttributeTypeName, NullableOblivious, NullableAnnotated);
 
         var nullableContextAttributes = member.CustomAttributes
             .Where(ca => ca.AttributeType.Name == NullableContextAttributeTypeName)
@@ -72,9 +73,10 @@ static class CecilExtensions
             .Where(ca => ca.Type.FullName == SystemByteFullTypeName)
             .ToList();
 
-        // Method's nullable context is 2
+        // Method's nullable context is 0 or 2
         defaultNullable |= nullableContextAttributes
-            .Any(ca => (byte) ca.Value == NullableAnnotated);
+            .Select(ca => (byte) ca.Value)
+            .Any(value => value == NullableOblivious || value == NullableAnnotated);
 
         // Method's nullable context is 1, so force false
         if (nullableContextAttributes
@@ -102,11 +104,11 @@ static class CecilExtensions
         return typeHasNullableContextAttribute || property.ImplicitAllowsNull();
     }
 
-    static bool HasNullableReferenceTypeAnnotation(this Mono.Collections.Generic.Collection<CustomAttribute> value, string attributeTypeName, byte annotation) 
+    static bool HasNullableReferenceTypeAnnotation(this Mono.Collections.Generic.Collection<CustomAttribute> value, string attributeTypeName, params byte[] annotation) 
         => value.Where(a => a.AttributeType.Name == attributeTypeName)
             .SelectMany(a => a.ConstructorArguments)
                 .Where(ca => ca.Type.FullName == SystemByteFullTypeName)
-                .Where(ca => (byte)ca.Value == annotation)
+                .Where(ca => annotation.Contains((byte)ca.Value))
                 .Any();
 
     public static bool ImplicitAllowsNull(this ICustomAttributeProvider value)

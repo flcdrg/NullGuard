@@ -191,6 +191,22 @@ public class RewritingMethods :
     }
 
     [Fact]
+    public void AllowsNullReturnValueWhenNullableDisabledInClassWithNullableContext1()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        Assert.Null(sample.MethodWithNullableContext0());
+    }
+
+    [Fact]
+    public void AllowsNullReturnValueWhenNullableDisabledInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        Assert.Null(sample.MethodWithNullableContext0());
+    }
+
+    [Fact]
     public void AllowsNullReturnValueWhenStaticNullableReferenceTypeUsedInClassWithNullableContext1()
     {
         var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
