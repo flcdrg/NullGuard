@@ -81,6 +81,38 @@ public class RewritingProperties :
     }
 
     [Fact]
+    public void PropertySetterAllowsNullArgumentForNullableTypeInClassWithNullableContext1()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        sample.NullProperty = null;
+    }
+
+    [Fact]
+    public void PropertySetterAllowsNullArgumentForNullableTypeInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        sample.NullProperty = null;
+    }
+
+    [Fact]
+    public void PropertyGetterReturnsNullForNullableTypeInClassWithNullableContext1()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext1));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        Assert.Null(sample.NullProperty);
+    }
+
+    [Fact]
+    public void PropertyGetterReturnsNullForNullableTypeInClassWithNullableContext2()
+    {
+        var type = AssemblyWeaver.Assembly.GetType(nameof(ClassWithNullableContext2));
+        var sample = (dynamic)Activator.CreateInstance(type);
+        Assert.Null(sample.NullProperty);
+    }
+
+    [Fact]
     public void DoesNotRequireNullSetterWhenPropertiesNotSpecifiedByAttribute()
     {
         var type = AssemblyWeaver.Assembly.GetType("ClassWithPrivateMethod");

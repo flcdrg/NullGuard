@@ -3,6 +3,9 @@ extends [mscorlib]System.Object
 {
 .custom instance void System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = ( 01 00 01 00 00 )
 .custom instance void System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = ( 01 00 00 00 00 )
+.field private string '<NullProperty>k__BackingField'
+.custom instance void System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = ( 01 00 02 00 00 )
+.field private string '<NonNullProperty>k__BackingField'
 .method public hidebysig instance void
 SomeMethod(string nonNullArg,
 string nullArg) cil managed
@@ -90,6 +93,42 @@ string)
 IL_0012:  throw
 IL_0013:  ret
 }
+.method public hidebysig specialname instance string
+get_NullProperty() cil managed
+{
+.custom instance void System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = ( 01 00 02 00 00 )
+.maxstack  8
+IL_0000:  ldarg.0
+IL_0001:  ldfld      string ClassWithNullableContext1::'<NullProperty>k__BackingField'
+IL_0006:  ret
+}
+.method public hidebysig specialname instance void
+set_NullProperty(string 'value') cil managed
+{
+.custom instance void System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = ( 01 00 02 00 00 )
+.maxstack  8
+IL_0000:  ldarg.0
+IL_0001:  ldarg.1
+IL_0002:  stfld      string ClassWithNullableContext1::'<NullProperty>k__BackingField'
+IL_0007:  ret
+}
+.method public hidebysig specialname instance string
+get_NonNullProperty() cil managed
+{
+.maxstack  8
+IL_0000:  ldarg.0
+IL_0001:  ldfld      string ClassWithNullableContext1::'<NonNullProperty>k__BackingField'
+IL_0006:  ret
+}
+.method public hidebysig specialname instance void
+set_NonNullProperty(string 'value') cil managed
+{
+.maxstack  8
+IL_0000:  ldarg.0
+IL_0001:  ldarg.1
+IL_0002:  stfld      string ClassWithNullableContext1::'<NonNullProperty>k__BackingField'
+IL_0007:  ret
+}
 .method public hidebysig specialname rtspecialname
 instance void  .ctor() cil managed
 {
@@ -97,5 +136,16 @@ instance void  .ctor() cil managed
 IL_0000:  ldarg.0
 IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
 IL_0006:  ret
+}
+.property instance string NullProperty()
+{
+.custom instance void System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = ( 01 00 02 00 00 )
+.get instance string ClassWithNullableContext1::get_NullProperty()
+.set instance void ClassWithNullableContext1::set_NullProperty(string)
+}
+.property instance string NonNullProperty()
+{
+.get instance string ClassWithNullableContext1::get_NonNullProperty()
+.set instance void ClassWithNullableContext1::set_NonNullProperty(string)
 }
 }

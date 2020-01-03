@@ -41,4 +41,27 @@ public class ClassWithNullableContext2
     {
         return nullArg;
     }
+
+    public string? NullProperty { get; set; }
+
+/*
+    [Nullable(1)]
+    public string NonNullableProperty
+    {
+        [NullableContext(1), CompilerGenerated]
+        get
+        {
+            return this.\u003CNonNullableProperty\u003Ek__BackingField;
+        }
+        [NullableContext(1), CompilerGenerated]
+        set
+        {
+            this.\u003CNonNullableProperty\u003Ek__BackingField = value;
+        }
+    }
+*/
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    public string NonNullProperty { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 }

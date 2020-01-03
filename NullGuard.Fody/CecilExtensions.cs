@@ -55,11 +55,18 @@ static class CecilExtensions
             return explicitMode.AllowsNull(parameter, method);
         }
 
+        var defaultNullable = GetDefaultNullableContext(method);
+
+        return defaultNullable || parameter.ImplicitAllowsNull();
+    }
+
+    static bool GetDefaultNullableContext(IMemberDefinition member)
+    {
         // Class's nullable context is 2
-        var defaultNullable = method.DeclaringType.CustomAttributes
+        var defaultNullable = member.DeclaringType.CustomAttributes
             .HasNullableReferenceTypeAnnotation(NullableContextAttributeTypeName, NullableAnnotated);
 
-        var nullableContextAttributes = method.CustomAttributes
+        var nullableContextAttributes = member.CustomAttributes
             .Where(ca => ca.AttributeType.Name == NullableContextAttributeTypeName)
             .SelectMany(a => a.ConstructorArguments)
             .Where(ca => ca.Type.FullName == SystemByteFullTypeName)
@@ -67,16 +74,16 @@ static class CecilExtensions
 
         // Method's nullable context is 2
         defaultNullable |= nullableContextAttributes
-            .Any(ca => (byte)ca.Value == NullableAnnotated);
+            .Any(ca => (byte) ca.Value == NullableAnnotated);
 
         // Method's nullable context is 1, so force false
         if (nullableContextAttributes
-                .Any(ca => (byte)ca.Value == NullableNotAnnotated))
+            .Any(ca => (byte) ca.Value == NullableNotAnnotated))
         {
             defaultNullable = false;
         }
 
-        return defaultNullable || parameter.ImplicitAllowsNull();
+        return defaultNullable;
     }
 
     public static bool AllowsNull(this PropertyDefinition property, ExplicitMode explicitMode)
@@ -86,7 +93,13 @@ static class CecilExtensions
             return explicitMode.AllowsNull(property);
         }
 
-        return property.ImplicitAllowsNull();
+        // For now we don't enforce not-null on properties, as it is legal when using nullable reference types
+        // to allow constructor to assign default! to a non-null property
+        var typeHasNullableContextAttribute = property.DeclaringType.CustomAttributes
+            .Where(a => a.AttributeType.Name == NullableContextAttributeTypeName)
+            .Any();
+
+        return typeHasNullableContextAttribute || property.ImplicitAllowsNull();
     }
 
     static bool HasNullableReferenceTypeAnnotation(this Mono.Collections.Generic.Collection<CustomAttribute> value, string attributeTypeName, byte annotation) 
@@ -111,31 +124,10 @@ static class CecilExtensions
             return explicitMode.AllowsNull(methodDefinition);
         }
 
-        // Type has NullableContext(2)
-        var defaultNullability = methodDefinition.DeclaringType.CustomAttributes
-            .HasNullableReferenceTypeAnnotation(NullableContextAttributeTypeName, NullableAnnotated);
-
-        var nullableContextAttributes = methodDefinition.CustomAttributes
-            .Where(a => a.AttributeType.Name == NullableContextAttributeTypeName)
-            .SelectMany(a => a.ConstructorArguments)
-            .Where(ca => ca.Type.FullName == SystemByteFullTypeName)
-            .ToList();
-
-        // Method has NullableContext(2)
-        defaultNullability |= nullableContextAttributes
-            .Any(ca => (byte)ca.Value == NullableAnnotated);
-
-        // Unless method has NullableContext(1)
-        if (nullableContextAttributes
-            .Any(ca => (byte)ca.Value == NullableNotAnnotated))
-        {
-            defaultNullability = false;
-        }
-
-        return defaultNullability ||
-        methodDefinition.MethodReturnType.CustomAttributes.Any(a => a.AttributeType.Name == AllowNullAttributeTypeName) ||
-            // ReSharper uses a *method* attribute for CanBeNull for the return value
-            methodDefinition.CustomAttributes.Any(a => a.AttributeType.Name == CanBeNullAttributeTypeName);
+        return GetDefaultNullableContext(methodDefinition) ||
+               methodDefinition.MethodReturnType.CustomAttributes.Any(a => a.AttributeType.Name == AllowNullAttributeTypeName) ||
+               // ReSharper uses a *method* attribute for CanBeNull for the return value
+               methodDefinition.CustomAttributes.Any(a => a.AttributeType.Name == CanBeNullAttributeTypeName);
     }
 
     public static bool ContainsAllowNullAttribute(this ICustomAttributeProvider definition)
