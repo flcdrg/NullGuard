@@ -186,7 +186,7 @@ public class NullableReferenceTypesModeAnalyzer : INullabilityAnalyzer
                ?? GetContextAllowsNull(method.DeclaringType);
     }
 
-    static bool? GetContextAllowsNull(TypeDefinition type)
+    static bool? GetContextAllowsNull(TypeDefinition? type)
     {
         if (type == null)
             return null;
