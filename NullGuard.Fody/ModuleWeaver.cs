@@ -141,7 +141,7 @@ public partial class ModuleWeaver: BaseModuleWeaver
                       DefineConstants.Any(c => c == "DEBUG") &&
                       DebugAssertMethod != null;
 
-        WriteInfo("Debug=" + isDebug);
+        WriteDebug("Debug=" + isDebug);
 
         foreach (var type in types)
         {
