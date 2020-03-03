@@ -31,7 +31,9 @@ public class ClassWithRefReturns
 
         public GenericNonNull([AllowNull] T value)
         {
+#pragma warning disable CS8601 // Possible null reference assignment
             _value = value;
+#pragma warning restore CS8601 // Possible null reference assignment
         }
 
         public ref T GetNonNullRef()
